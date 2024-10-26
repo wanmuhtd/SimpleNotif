@@ -14,6 +14,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.dicoding.wanmuhtd.simplenotif.databinding.ActivityMainBinding
 import android.Manifest
+import android.app.PendingIntent
+import android.content.Intent
+import android.net.Uri
 
 class MainActivity : AppCompatActivity() {
 
@@ -58,6 +61,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sendNotification(title: String, message: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("http://dicoding.com"))
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
+        )
+
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(title)
@@ -65,6 +76,8 @@ class MainActivity : AppCompatActivity() {
             .setSmallIcon(R.drawable.baseline_notifications_active_24)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setSubText(getString(R.string.notification_subtext))
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
